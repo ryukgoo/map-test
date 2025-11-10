@@ -2,8 +2,6 @@ package com.example.maptest.data
 
 import android.content.Context
 import androidx.room.Room
-import com.example.maptest.data.LocationDao
-import com.example.maptest.data.AppDatabase
 
 object AppDatabaseProvider {
     @Volatile

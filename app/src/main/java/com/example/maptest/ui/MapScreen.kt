@@ -3,7 +3,6 @@ package com.example.maptest.ui
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -98,7 +97,7 @@ fun MapScreen() {
 @Composable
 private fun MapContent(
     modifier: Modifier = Modifier,
-    currentLocation: LatLng? = LatLng(37.5665, 126.9780),
+    currentLocation: LatLng? = null,
     hasPermission: Boolean,
     showPermissionDeniedText: Boolean,
     permanentlyDenied: Boolean,
@@ -106,14 +105,10 @@ private fun MapContent(
     onCurrentLocationClick: () -> Unit
 ) {
 
-    Log.d("Location", "currentLocation: $currentLocation")
-    val defaultLocation = LatLng(37.5665, 126.9780)
-    val location = currentLocation ?: defaultLocation
-
+    val location = currentLocation ?: LatLng(37.5665, 126.9780)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(location, 12f)
     }
-
     val markerState = rememberUpdatedMarkerState(location)
 
     LaunchedEffect(currentLocation) {
@@ -122,7 +117,6 @@ private fun MapContent(
                 update = CameraUpdateFactory.newLatLngZoom(it, 12f),
                 durationMs = 500
             )
-            Log.d("Camera", "카메라 이동: ${currentLocation.latitude}, ${currentLocation.longitude}")
         }
     }
 
@@ -140,7 +134,7 @@ private fun MapContent(
                     onCurrentLocationClick()
                 },
                 modifier = Modifier
-                    .align(Alignment.BottomStart)
+                    .align(Alignment.BottomCenter)
                     .padding(16.dp)
             ) {
                 Text("현 위치")
