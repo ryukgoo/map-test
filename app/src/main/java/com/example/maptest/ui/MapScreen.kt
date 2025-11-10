@@ -3,6 +3,7 @@ package com.example.maptest.ui
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -103,19 +106,33 @@ private fun MapContent(
     onCurrentLocationClick: () -> Unit
 ) {
 
+    Log.d("Location", "currentLocation: $currentLocation")
     val defaultLocation = LatLng(37.5665, 126.9780)
+    val location = currentLocation ?: defaultLocation
+
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(defaultLocation, 12f)
+        position = CameraPosition.fromLatLngZoom(location, 12f)
     }
-    val markerState = rememberUpdatedMarkerState(currentLocation ?: defaultLocation)
+
+    val markerState = rememberUpdatedMarkerState(location)
+
+    LaunchedEffect(currentLocation) {
+        currentLocation?.let {
+            cameraPositionState.animate(
+                update = CameraUpdateFactory.newLatLngZoom(it, 12f),
+                durationMs = 500
+            )
+            Log.d("Camera", "카메라 이동: ${currentLocation.latitude}, ${currentLocation.longitude}")
+        }
+    }
 
     if (hasPermission) {
         Box(modifier = modifier.fillMaxSize()) {
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState
+                cameraPositionState = cameraPositionState,
             ) {
-                Marker(state = markerState, title = "현재 위치")
+                currentLocation?.let { Marker(state = markerState, title = "현재 위치") }
             }
 
             Button(

@@ -2,11 +2,10 @@ package com.example.maptest.worker
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.maptest.data.AppDatabaseProvider
-import com.example.maptest.data.entity.LocationEntity
+import com.example.maptest.data.LocationEntity
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.tasks.await
 
@@ -25,17 +24,17 @@ class LocationWorker(
             if (location != null) {
                 val dao = AppDatabaseProvider.getLocationDao(applicationContext)
                 dao.insert(
-                    LocationEntity(
-                        latitude = location.latitude,
-                        longitude = location.longitude
-                    )
+//                    LocationEntity(
+//                        latitude = location.latitude,
+//                        longitude = location.longitude
+//                    )
+                    LocationEntity(latitude = 37.5665, longitude = 126.9780)
                 )
-                Log.d("LocationWorker", "DB insert 완료: ${location.latitude}, ${location.longitude}")
                 Result.success()
             } else {
                 Result.retry()
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Result.failure()
         }
     }

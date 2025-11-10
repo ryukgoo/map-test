@@ -1,15 +1,15 @@
-package com.example.maptest.data.dao
+package com.example.maptest.data
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.maptest.data.entity.LocationEntity
+import com.example.maptest.data.LocationEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LocationDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insert(location: LocationEntity)
 
     @Query("SELECT * FROM locations ORDER BY timestamp DESC LIMIT 1")
