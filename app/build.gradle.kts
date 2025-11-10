@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -52,7 +53,17 @@ dependencies {
     implementation(libs.androidx.compose.material3)
 
     implementation(libs.google.maps)
+    implementation(libs.google.maps.compose)
     implementation(libs.google.location)
+
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.google.play.services.location)
+
+    implementation(libs.kotlinx.coroutines.play.services)
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -8,6 +8,8 @@ espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
 composeBom = "2024.09.00"
+room = "2.6.1"
+ksp = "2.0.21-1.0.27"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -27,10 +29,26 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 
 # google-map-libraries
 google-maps = { module = "com.google.android.gms:play-services-maps", version = "19.2.0" }
+google-maps-compose = { module = "com.google.maps.android:maps-compose", version = "6.6.0" }
+#noinspection SimilarGradleDependency
 google-location = { module = "com.google.android.gms:play-services-location", version = "21.3.0" }
+
+# work-manager
+androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version = "2.11.0" }
+#noinspection SimilarGradleDependency
+google-play-services-location = { module = "com.google.android.gms:play-services-location", version = "21.3.0" }
+
+# kotlinx
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version = "1.9.0" }
+
+# room
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
