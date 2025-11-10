@@ -1,23 +1,19 @@
 package com.example.maptest.ui
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import com.example.maptest.data.AppDatabaseProvider
-import com.example.maptest.worker.LocationWorker
+import com.example.maptest.data.LocationRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class MapViewModel(context: Context): ViewModel() {
-    private val dao = AppDatabaseProvider.getLocationDao(context)
-
-    val latestLocation = dao.getLatestLocation()
+@HiltViewModel
+class MapViewModel @Inject constructor(
+    private val repository: LocationRepository
+) : ViewModel() {
+    val latestLocation = repository.getLatestLocation()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-    fun requestLocation(context: Context) {
-        val workRequest = OneTimeWorkRequestBuilder<LocationWorker>().build()
-        WorkManager.getInstance(context).enqueue(workRequest)
-    }
+    fun updateLocation() = repository.updateLocation()
 }

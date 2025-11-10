@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -37,13 +38,11 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
 
 @Composable
-fun MapScreen() {
+fun MapScreen(
+    viewModel: MapViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
 
-    // ✅ ViewModel 생성
-    val viewModel = remember { MapViewModel(context) }
-
-    // ✅ Room DB에서 최신 위치 Flow 관찰
     val latestLocation by viewModel.latestLocation.collectAsStateWithLifecycle()
     val currentLatLng = latestLocation?.let { LatLng(it.latitude, it.longitude) }
 
@@ -78,7 +77,7 @@ fun MapScreen() {
 
     fun onCurrentLocationClick() {
         if (hasPermission) {
-            viewModel.requestLocation(context)
+            viewModel.updateLocation()
         } else {
             onRequestPermission()
         }

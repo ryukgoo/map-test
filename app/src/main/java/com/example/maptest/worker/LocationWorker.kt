@@ -2,17 +2,22 @@ package com.example.maptest.worker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.maptest.data.AppDatabaseProvider
+import com.example.maptest.data.LocationDao
 import com.example.maptest.data.LocationEntity
 import com.google.android.gms.location.LocationServices
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
 import kotlin.random.Random
 
-class LocationWorker(
-    context: Context,
-    workerParameters: WorkerParameters
+@HiltWorker
+class LocationWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted workerParameters: WorkerParameters,
+    private val locationDao: LocationDao
 ) : CoroutineWorker(context, workerParameters) {
 
     private val fusedLocationClient =
@@ -25,8 +30,7 @@ class LocationWorker(
             if (location != null) {
                 val randomLat = Random.nextDouble(37.4, 37.7)
                 val randomLng = Random.nextDouble(126.8, 127.2)
-                val dao = AppDatabaseProvider.getLocationDao(applicationContext)
-                dao.insert(
+                locationDao.insert(
 //                    LocationEntity(
 //                        latitude = location.latitude,
 //                        longitude = location.longitude
