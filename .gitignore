@@ -1,0 +1,60 @@
+# ===============================
+# Android Studio & Gradle Build
+# ===============================
+*.iml
+.gradle/
+build/
+.cxx/
+.externalNativeBuild/
+captures/
+
+# ===============================
+# IDE Configuration
+# (개인 개발환경에 종속적인 설정 제외)
+# ===============================
+.idea/
+!.idea/codeStyles/
+!.idea/runConfigurations/
+!.idea/vcs.xml
+.DS_Store
+Thumbs.db
+
+# ===============================
+# Local Properties & Keystore
+# (API Key, 서명 키 등 민감정보)
+# ===============================
+local.properties
+*.jks
+*.keystore
+
+# ===============================
+# Logs & Generated Files
+# ===============================
+*.log
+
+# ===============================
+# Compose / Preview / Cache
+# ===============================
+*.preview
+
+# ===============================
+# OS-specific
+# ===============================
+.DS_Store
+
+# ===============================
+# Room / Database / Temp files
+# ===============================
+*.db
+*.db-shm
+*.db-wal
+
+# ===============================
+# Miscellaneous
+# ===============================
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
