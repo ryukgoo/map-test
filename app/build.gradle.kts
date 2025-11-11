@@ -87,6 +87,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     annotationProcessor(libs.hilt.compiler)
 
+    implementation(libs.accompanist.permissions)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
