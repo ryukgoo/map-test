@@ -24,6 +24,31 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 
+/**
+ * Handles runtime permission requests for accessing the user's fine location.
+ *
+ * This composable monitors the permission state for `ACCESS_FINE_LOCATION`
+ * using Accompanist Permissions and reacts accordingly:
+ *
+ * - If permission is granted → `onPermissionGranted()` is called.
+ * - If permission is denied once → shows rationale dialog (`showRationaleDialog`).
+ * - If permission is permanently denied → shows settings dialog (`showSettingsDialog`).
+ *
+ * ## ⚠️ Behavior notes on Android 13 (API 33) and above
+ *
+ * Starting from **Android 13 (API 33)**, the system's permission dialog UX has changed:
+ * - The **"Don't ask again"** checkbox is no longer displayed.
+ * - The system now manages re-request behavior automatically.
+ * - As a result, `shouldShowRationale` almost always returns `false`
+ *   even after the user denies the permission.
+ *
+ * Therefore, on **API 33+**, `showRationaleDialog` is rarely triggered.
+ * The flow typically goes straight from denial to `showSettingsDialog`.
+ *
+ * To test rationale dialog behavior, use an **emulator running Android 12L (API 32)** or lower.
+ *
+ * @param onPermissionGranted Composable callback executed when permission is granted.
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationPermissionHandler(
