@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -20,6 +22,18 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // load from local.properties
+        val localProperties = project.rootProject.file("local.properties")
+        if (localProperties.exists()) {
+            val properties = Properties().apply {
+                load(localProperties.inputStream())
+            }
+            val apiKey = properties.getProperty("MAPS_API_KEY") ?: ""
+            manifestPlaceholders["MAPS_API_KEY"] = apiKey
+        } else {
+            manifestPlaceholders["MAPS_API_KEY"] = ""
+        }
     }
 
     buildTypes {

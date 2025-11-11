@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
                     TopAppBar(
-                        title = { Text("Map Test") }
+                        title = { Text("Map View") }
                     )
                 }
             ) { innerPadding ->
