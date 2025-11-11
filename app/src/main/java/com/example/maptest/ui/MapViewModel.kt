@@ -20,10 +20,12 @@ class MapViewModel @Inject constructor(
     private val repository: LocationRepository
 ) : ViewModel() {
 
-    val currentLocation: StateFlow<LatLng?> =
+    private val defaultLocation = LatLng(37.5665, 126.9780)
+
+    val currentLocation: StateFlow<LatLng> =
         repository.getLatestLocation()
-            .map { it?.let { LatLng(it.latitude, it.longitude) } }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+            .map { it?.let { LatLng(it.latitude, it.longitude) } ?: defaultLocation }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), defaultLocation)
 
     private val _workState = MutableStateFlow<String?>(null)
     val workState: StateFlow<String?> = _workState

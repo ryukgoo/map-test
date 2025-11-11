@@ -30,6 +30,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
+import kotlinx.coroutines.CancellationException
 
 @Composable
 fun MapScreen(
@@ -50,22 +51,24 @@ fun MapScreen(
 @Composable
 fun MapContent(
     modifier: Modifier = Modifier,
-    currentLocation: LatLng? = null,
+    currentLocation: LatLng,
     workState: String? = null,
     onCurrentLocationClick: () -> Unit
 ) {
-    val location = currentLocation ?: LatLng(37.5665, 126.9780)
+    val location = currentLocation
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(location, 12f)
     }
     val markerState = rememberUpdatedMarkerState(location)
 
     LaunchedEffect(currentLocation) {
-        currentLocation?.let {
+        try {
             cameraPositionState.animate(
-                update = CameraUpdateFactory.newLatLngZoom(it, 12f),
+                update = CameraUpdateFactory.newLatLngZoom(currentLocation, 12f),
                 durationMs = 500
             )
+        } catch (_: CancellationException) {
+            // TODO: Handle cancellation if needed
         }
     }
 
@@ -74,9 +77,7 @@ fun MapContent(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
         ) {
-            currentLocation?.let {
-                Marker(state = markerState, title = "현재 위치")
-            }
+            Marker(state = markerState, title = "현재 위치")
         }
 
         Button(
@@ -97,6 +98,7 @@ fun MapContent(
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
                         )
                     }
+
                     "FAILED" -> { // ✅ 갱신 실패
                         Spacer(modifier = Modifier.size(8.dp))
                         Icon(
@@ -106,6 +108,7 @@ fun MapContent(
                             modifier = Modifier.size(16.dp)
                         )
                     }
+
                     else -> {} // IDLE / SUCCEEDED 시 인디케이터 없음
                 }
             }
