@@ -69,6 +69,9 @@ fun MapContent(
             )
         } catch (_: CancellationException) {
             // TODO: Handle cancellation if needed
+//            cameraPositionState.move(
+//                CameraUpdateFactory.newLatLngZoom(currentLocation, 12f)
+//            )
         }
     }
 

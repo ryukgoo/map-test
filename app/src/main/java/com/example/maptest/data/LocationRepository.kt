@@ -1,6 +1,7 @@
 package com.example.maptest.data
 
 import androidx.lifecycle.asFlow
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.maptest.worker.LocationWorker
@@ -17,11 +18,20 @@ class LocationRepository @Inject constructor(
     private val workManager: WorkManager
 ) {
 
+    companion object {
+        const val LOCATION_UPDATE_WORK = "LOCATION_UPDATE_WORK"
+    }
+
     fun getLatestLocation(): Flow<LocationEntity?> = locationDao.getLatestLocation()
 
     fun updateLocation(): UUID {
         val request = OneTimeWorkRequestBuilder<LocationWorker>().build()
-        workManager.enqueue(request)
+
+        workManager.enqueueUniqueWork(
+            LOCATION_UPDATE_WORK,
+            ExistingWorkPolicy.REPLACE,
+            request
+        )
         return request.id
     }
 
