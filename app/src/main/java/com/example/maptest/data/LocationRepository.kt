@@ -4,6 +4,7 @@ import androidx.lifecycle.asFlow
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.maptest.di.WorkKeys.LOCATION_UPDATE_WORK
 import com.example.maptest.worker.LocationWorker
 import com.example.maptest.worker.WorkState
 import kotlinx.coroutines.flow.Flow
@@ -13,19 +14,21 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
+interface LocationRepository {
+    fun getLatestLocation(): Flow<LocationEntity?>
+    fun updateLocation(): UUID
+    fun observeWorkState(id: UUID?): Flow<WorkState>
+}
+
 @Singleton
-class LocationRepository @Inject constructor(
+class LocationRepositoryImpl @Inject constructor(
     private val locationDao: LocationDao,
     private val workManager: WorkManager
-) {
+) : LocationRepository {
 
-    companion object {
-        const val LOCATION_UPDATE_WORK = "LOCATION_UPDATE_WORK"
-    }
+    override fun getLatestLocation(): Flow<LocationEntity?> = locationDao.getLatestLocation()
 
-    fun getLatestLocation(): Flow<LocationEntity?> = locationDao.getLatestLocation()
-
-    fun updateLocation(): UUID {
+    override fun updateLocation(): UUID {
         val request = OneTimeWorkRequestBuilder<LocationWorker>().build()
 
         workManager.enqueueUniqueWork(
@@ -36,7 +39,7 @@ class LocationRepository @Inject constructor(
         return request.id
     }
 
-    fun observeWorkState(id: UUID?): Flow<WorkState> =
+    override fun observeWorkState(id: UUID?): Flow<WorkState> =
         id?.let {
             workManager.getWorkInfoByIdLiveData(id)
                 .asFlow()

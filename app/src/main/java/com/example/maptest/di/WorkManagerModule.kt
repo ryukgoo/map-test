@@ -18,3 +18,7 @@ object WorkManagerModule {
     fun providerWorkManager(@ApplicationContext context: Context): WorkManager =
         WorkManager.getInstance(context)
 }
+
+object WorkKeys {
+    const val LOCATION_UPDATE_WORK = "LOCATION_UPDATE_WORK"
+}
