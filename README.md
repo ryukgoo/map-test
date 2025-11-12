@@ -105,3 +105,12 @@
 > 비동기 위치 조회 및 마커 표시 기능을 구현했습니다.  
 > 상태 관리를 단일 UiState로 통합하고, UniqueWork 및 WorkState Enum을 통해  
 > 안정적이고 명확한 백그라운드 처리를 구현했습니다.
+
+---
+
+## 🧠 AI Assist Prompt
+
+이 프로젝트의 개발 과정에서 사용된 AI Assist 프롬프트 내역은 PDF 파일로 정리되어 있습니다.  
+아래 링크를 통해 확인할 수 있습니다.
+
+[📄 AI Prompts PDF 보기](ai_prompt.pdf)
