@@ -1,4 +1,4 @@
-package com.example.maptest.data
+package com.example.maptest.data.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

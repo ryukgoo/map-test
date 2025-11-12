@@ -1,4 +1,4 @@
-package com.example.maptest.data
+package com.example.maptest.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

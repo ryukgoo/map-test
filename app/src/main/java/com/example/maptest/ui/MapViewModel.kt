@@ -2,8 +2,8 @@ package com.example.maptest.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.maptest.data.LocationRepository
-import com.example.maptest.worker.WorkState
+import com.example.maptest.data.repository.LocationRepository
+import com.example.maptest.data.worker.WorkState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +55,20 @@ class MapViewModel @Inject constructor(
     }
 }
 
+/**
+ * UI state holder for the Map screen.
+ *
+ * This state combines both the user's latest known location
+ * and the current background work status from [androidx.work.WorkManager].
+ *
+ * It is observed by the Compose UI layer to render the current
+ * map marker position and update indicators (e.g., loading spinner, error icon).
+ *
+ * @property location The latest known geographic coordinate to display on the map.
+ *                    Defaults to Seoul City Hall (37.5665, 126.9780).
+ * @property workState The current status of the background work task handled by [androidx.work.WorkManager].
+ *                     Used to indicate whether the location is being updated, failed, or completed.
+ */
 data class MapUiState(
     val location: LatLng = LatLng(37.5665, 126.9780),
     val workState: WorkState = WorkState.IDLE
