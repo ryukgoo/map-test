@@ -11,9 +11,30 @@ import com.example.maptest.data.LocationEntity
 import com.google.android.gms.location.LocationServices
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
+
+enum class WorkState(val status: String) {
+    IDLE("IDLE"),
+    RUNNING("RUNNING"),
+    FAILED("FAILED"),
+    DONE("DONE"),
+    UNKNOWN("UNKNOWN");
+
+    companion object {
+        fun from(status: String?): WorkState =
+            when (status?.uppercase()) {
+                RUNNING.status -> RUNNING
+                DONE.status -> DONE
+                FAILED.status -> FAILED
+                IDLE.status -> IDLE
+                else -> UNKNOWN
+            }
+    }
+}
 
 @HiltWorker
 class LocationWorker @AssistedInject constructor(
@@ -26,11 +47,11 @@ class LocationWorker @AssistedInject constructor(
         LocationServices.getFusedLocationProviderClient(context)
 
     @SuppressLint("MissingPermission")
-    override suspend fun doWork(): Result {
-        return try {
-            setProgress(workDataOf("status" to "RUNNING"))
-            // Simulate long-running task
-            delay(1000L)
+    override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
+        try {
+            setProgress(workDataOf("status" to WorkState.RUNNING.status))
+            delay(1000L) // Simulate long-running task
+
             val location = fusedLocationClient.lastLocation.await()
             if (location != null) {
                 val randomLat = Random.nextDouble(37.4, 37.7)
@@ -39,13 +60,13 @@ class LocationWorker @AssistedInject constructor(
 //                    LocationEntity(latitude = location.latitude, longitude = location.longitude)
                     LocationEntity(latitude = randomLat, longitude = randomLng)
                 )
-                setProgress(workDataOf("status" to "DONE"))
+                setProgress(workDataOf("status" to WorkState.DONE.status))
                 Result.success()
             } else {
                 Result.retry()
             }
         } catch (_: Exception) {
-            setProgress(workDataOf("status" to "FAILED"))
+            setProgress(workDataOf("status" to WorkState.FAILED.status))
             Result.failure()
         }
     }

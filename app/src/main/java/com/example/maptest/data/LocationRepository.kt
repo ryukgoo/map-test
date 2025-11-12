@@ -5,6 +5,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.maptest.worker.LocationWorker
+import com.example.maptest.worker.WorkState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -35,12 +36,10 @@ class LocationRepository @Inject constructor(
         return request.id
     }
 
-    fun observeWorkState(id: UUID?): Flow<String?> =
+    fun observeWorkState(id: UUID?): Flow<WorkState> =
         id?.let {
             workManager.getWorkInfoByIdLiveData(id)
                 .asFlow()
-                .map { it?.progress?.getString("status") }
-        } ?: run {
-            flowOf(null)
-        }
+                .map { WorkState.from(it?.progress?.getString("status")) }
+        } ?: flowOf(WorkState.UNKNOWN)
 }

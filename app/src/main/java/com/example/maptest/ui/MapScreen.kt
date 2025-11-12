@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.maptest.worker.WorkState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -36,13 +37,12 @@ import kotlinx.coroutines.CancellationException
 fun MapScreen(
     viewModel: MapViewModel = hiltViewModel()
 ) {
-    val currentLocation by viewModel.currentLocation.collectAsStateWithLifecycle()
-    val workState by viewModel.workState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LocationPermissionHandler {
         MapContent(
-            currentLocation = currentLocation,
-            workState = workState,
+            currentLocation = uiState.location,
+            workState = uiState.workState,
             onCurrentLocationClick = viewModel::updateLocation
         )
     }
@@ -52,7 +52,7 @@ fun MapScreen(
 fun MapContent(
     modifier: Modifier = Modifier,
     currentLocation: LatLng,
-    workState: String? = null,
+    workState: WorkState = WorkState.IDLE,
     onCurrentLocationClick: () -> Unit
 ) {
     val location = currentLocation
@@ -93,7 +93,7 @@ fun MapContent(
                 Text("현 위치")
 
                 when (workState) {
-                    "RUNNING" -> { // ✅ 위치 갱신 중
+                    WorkState.RUNNING -> { // ✅ 위치 갱신 중
                         Spacer(modifier = Modifier.size(8.dp))
                         CircularProgressIndicator(
                             modifier = Modifier.size(16.dp),
@@ -102,7 +102,7 @@ fun MapContent(
                         )
                     }
 
-                    "FAILED" -> { // ✅ 갱신 실패
+                    WorkState.FAILED -> { // ✅ 갱신 실패
                         Spacer(modifier = Modifier.size(8.dp))
                         Icon(
                             imageVector = Icons.Filled.Warning,
@@ -112,7 +112,7 @@ fun MapContent(
                         )
                     }
 
-                    else -> {} // IDLE / SUCCEEDED 시 인디케이터 없음
+                    else -> {}
                 }
             }
         }
