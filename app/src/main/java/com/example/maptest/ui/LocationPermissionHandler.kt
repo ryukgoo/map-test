@@ -28,24 +28,21 @@ import com.google.accompanist.permissions.shouldShowRationale
  * Handles runtime permission requests for accessing the user's fine location.
  *
  * This composable monitors the permission state for `ACCESS_FINE_LOCATION`
- * using Accompanist Permissions and reacts accordingly:
+ * using Accompanist Permissions and reacts according to the current status.
  *
- * - If permission is granted → `onPermissionGranted()` is called.
- * - If permission is denied once → shows rationale dialog (`showRationaleDialog`).
- * - If permission is permanently denied → shows settings dialog (`showSettingsDialog`).
+ * ### Behavior Summary
+ * - ✅ **Granted** → `onPermissionGranted()` is called.
+ * - ⚠️ **Denied once** → rationale dialog is shown to explain why permission is needed.
+ * - ❌ **Permanently denied ("Don't ask again")** → settings dialog is shown to open app settings.
+ * - 🕓 **First launch (never requested)** → system permission dialog is automatically triggered.
  *
- * ## ⚠️ Behavior notes on Android 13 (API 33) and above
+ * ### Implementation Details
+ * The `permissionRequested` flag ensures that the system permission popup
+ * is only launched once on the first request, avoiding unintended repeated calls.
  *
- * Starting from **Android 13 (API 33)**, the system's permission dialog UX has changed:
- * - The **"Don't ask again"** checkbox is no longer displayed.
- * - The system now manages re-request behavior automatically.
- * - As a result, `shouldShowRationale` almost always returns `false`
- *   even after the user denies the permission.
- *
- * Therefore, on **API 33+**, `showRationaleDialog` is rarely triggered.
- * The flow typically goes straight from denial to `showSettingsDialog`.
- *
- * To test rationale dialog behavior, use an **emulator running Android 12L (API 32)** or lower.
+ * On Android 13 (API 33) and above, `shouldShowRationale` almost always returns `false`
+ * because the system automatically manages re-request behavior. Therefore, the rationale
+ * dialog may not appear even after a denial; this is expected.
  *
  * @param onPermissionGranted Composable callback executed when permission is granted.
  */
@@ -61,6 +58,7 @@ fun LocationPermissionHandler(
 
     var showRationaleDialog by remember { mutableStateOf(false) }
     var showSettingsDialog by remember { mutableStateOf(false) }
+    var permissionRequested by remember { mutableStateOf(false) }
 
     LaunchedEffect(permissionState.status) {
         when {
@@ -68,9 +66,16 @@ fun LocationPermissionHandler(
                 showRationaleDialog = false
                 showSettingsDialog = false
             }
+
             permissionState.status.shouldShowRationale -> {
                 showRationaleDialog = true
             }
+
+            !permissionRequested -> {
+                permissionRequested = true
+                permissionState.launchPermissionRequest()
+            }
+
             else -> {
                 showSettingsDialog = true
             }
