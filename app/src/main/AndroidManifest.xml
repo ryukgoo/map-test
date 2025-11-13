@@ -26,11 +26,9 @@
             </intent-filter>
         </activity>
 
-        <!-- TODO: API_KEY -> local.properties -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyC406UXEy3_kx5XfG6P3N8by-c56b_6xtw" />
-            <!--android:value="${MAPS_API_KEY}" />-->
+            android:value="${MAPS_API_KEY}" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

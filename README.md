@@ -73,6 +73,18 @@
 
 ---
 
+## 🔐 Google Maps API Key 설정 안내
+
+보안상의 이유로 실제 Google Maps API Key는 저장소에 포함하지 않았습니다.  
+앱 실행 시에는 로컬 환경에서 아래 방법으로 API Key를 설정해 주세요.
+
+### `local.properties` 파일에 Key 추가
+```
+MAPS_API_KEY={KEY}
+```
+
+---
+
 ## ⚙️ 개선 사항 요약
 
 | 구분 | 내용 |
