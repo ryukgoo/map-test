@@ -6,14 +6,12 @@ import com.example.maptest.data.repository.LocationRepository
 import com.example.maptest.data.worker.WorkState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
 
@@ -28,14 +26,12 @@ class MapViewModel @Inject constructor(
     private var currentWorkId: UUID? = null
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.getLatestLocation()
                 .map { it?.let { LatLng(it.latitude, it.longitude) } }
                 .collect { location ->
-                    withContext(Dispatchers.Main) {
-                        location?.let {
-                            _uiState.update { state -> state.copy(location = it) }
-                        }
+                    location?.let {
+                        _uiState.update { state -> state.copy(location = it) }
                     }
                 }
         }
@@ -44,12 +40,10 @@ class MapViewModel @Inject constructor(
     fun updateLocation() {
         currentWorkId = repository.updateLocation()
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.observeWorkState(currentWorkId)
                 .collectLatest { status ->
-                    withContext(Dispatchers.Main) {
-                        _uiState.update { state -> state.copy(workState = status) }
-                    }
+                    _uiState.update { state -> state.copy(workState = status) }
                 }
         }
     }
